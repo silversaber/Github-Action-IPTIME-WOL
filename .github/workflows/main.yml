@@ -2,6 +2,8 @@ name: Gtihub-Action-IPTIME-WOL
 
 #on : [push]
 on:
+  push:
+    branches: [master]
   schedule:
     - cron: '0 0 * * *'
 
