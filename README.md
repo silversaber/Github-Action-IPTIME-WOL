@@ -1,16 +1,10 @@
 # Github-Action-IPTIME-WOL
 
 ## 1. 목적
-
----
-
 매일 UTC 00:00(KTC 09:00)시에 [IPTIME][iptimelink] 공유기를 통해 Wake On Lan을 실행하고  
 그 결과를 이슈에 저장하는 [Github-Action][githubactionlink] 코드입니다.
 
 ## 2. 의존성
-
----
-
 본 프로젝트에서 사용된 모듈은 이하와 같습니다.
 
 > 1.  [1466587594/get-current-time@v2][1466587594/get-current-time@v2link]
