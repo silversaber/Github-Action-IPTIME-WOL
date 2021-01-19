@@ -1,4 +1,4 @@
-# Gtihub-Action-IPTIME-WOL
+# Github-Action-IPTIME-WOL
 
 ## 1. 목적
 
