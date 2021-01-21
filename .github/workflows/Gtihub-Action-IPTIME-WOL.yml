@@ -26,10 +26,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - run : |
-                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin1/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
-                  RES_CODE_STR = "성공"
-                  if [ ${RES_CODE} -ne 200 ] ; then
-                      RES_CODE_STR = "실패"
+                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
+                  RES_CODE_STR = "실패"
+                  if [ ${RES_CODE} -eq 200 ] ; then
+                      RES_CODE_STR = "성공"
                   fi
                   echo "set-output name=status::" + $RES_CODE_STR
 
