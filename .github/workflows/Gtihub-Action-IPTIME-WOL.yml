@@ -20,6 +20,7 @@ jobs:
                   sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
                   echo "set-output name=now::${time}"
+                  echo "set-output name=title::${time} 실행결과입니다."
 
             - id : sendMagicPacket
               name : "send Magic Packet"
@@ -34,7 +35,7 @@ jobs:
             - id : createIssue
               name : "Create Issue"
               run : |
-                  title=${{ steps.getCurrentTime.outputs.now }}" 실행결과입니다."
+                  title=${{ steps.getCurrentTime.outputs.title }}
                   labels=$GITHUB_EVENT_NAME
                   body=${{ steps.sendMagicPacket.outputs.status }}
                   RES_CODE=$(curl -o /dev/null -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/{GITHUB_REPOSITORY}/issues -d '{"title": ${title}, "labels" : ${labels}}')
