@@ -15,7 +15,7 @@ jobs:
         name: "Get current time"
         runs-on: ubuntu-latest
         steps:
-            - runs : |
+            - run : |
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
                   echo $time
 
