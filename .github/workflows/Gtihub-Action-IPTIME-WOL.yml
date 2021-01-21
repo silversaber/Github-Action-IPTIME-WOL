@@ -11,26 +11,19 @@ on:
         - cron: "30 23 * * *"
 
 jobs:
-    getCurrentTime:
-        name: "Get current time"
+    WOL:
+        name: "WOL"
         runs-on: ubuntu-latest
-        outputs:
-          now : ${{steps.script.outputs.now}}
         steps:
-            - id : script
+            - id : getCurrentTime
+              name : "get Current Time"
               run : |
                   sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
                   echo "set-output name=now::" + $time
 
-    sendMagicPacket:
-        name: "send curl"
-        needs: getCurrentTime
-        runs-on: ubuntu-latest
-        outputs:
-            script: ${{steps.script.outputs.status}}
-        steps:
-            - id : script
+            - id : sendMagicPacket
+              name : "send Magic Packet"
               run : |
                   RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
                   if [ ${RES_CODE} == "200" ]; then
@@ -39,15 +32,9 @@ jobs:
                       echo "set-output name=status::실패"
                   fi
 
-    createIssue:
-      name: "Create Issue"
-      needs: [sendMagicPacket, getCurrentTime]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: nashmaniac/create-issue-action@v1.1
-          with:
-            title: ${{ needs.getCurrentTime.outputs.now }} 실행결과입니다.
-            token: ${{secrets.GITHUB_TOKEN}}
-            assignees: ${{github.actor}}
-            labels: result
-            body: ${{ needs.sendMagicPacket.outputs.status }}
+            - id : createIssue
+              name : "Create Issue"
+              run : |
+                  title = "${{ steps.getCurrentTime.outputs.now }} 실행결과입니다."
+                  RES_CODE=$(curl -o /dev/null -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/{github.repository}/issues -d '{"title": ${title}}')
+                  echo $RES_CODE
