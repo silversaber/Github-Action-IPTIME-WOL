@@ -26,5 +26,22 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - run : |
-                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
-                  echo $RES_CODE
+                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}1/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
+                  RES_CODE_STR = "성공"
+                  if [ ${RES_CODE} -ne 200 ] ; then
+                      RES_CODE_STR = "실패"
+                  fi
+                  echo "set-output name=status::" + $RES_CODE_STR
+
+    createIssue:
+      name: "Create Issue"
+      needs: [sendMagicPacket, getCurrentTime]
+      runs-on: ubuntu-latest
+      steps:
+        - uses: nashmaniac/create-issue-action@v1.1
+          with:
+            title: ${{ needs.getCurrentTime.outputs.now }} 실행결과입니다.
+            token: ${{secrets.GITHUB_TOKEN}}
+            assignees: ${{github.actor}}
+            labels: result
+            body: ${{ needs.sendMagicPacket.outputs.result }}
