@@ -18,39 +18,13 @@ jobs:
             - run : |
                   sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
-                  echo $time
+                  echo "set-output name=now::" + $time
 
     sendMagicPacket:
         name: "send curl"
         needs: getCurrentTime
-        outputs:
-            result:  ${{steps.reporter.outputs.value}}
         runs-on: ubuntu-latest
         steps:
-            - uses: indiesdev/curl@v1
-              id: api
-              with:
-                  url: ${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}
-                  method: "GET"
-                  headers: '{"Authorization" : "Basic ${{secrets.IPTIME_BASIC}}", "Referer" : "http://192.168.0.1:80"}'
-
-            - uses: haya14busa/action-cond@v1
-              name: "create curl result"
-              id: reporter
-              with:
-                  cond: ${{ fromJson(steps.api.outputs.response).status_code == '200' }}
-                  if_true: "WOL 성공"
-                  if_false: "WOL 실패"
-
-    createIssue:
-        name: "Create Issue"
-        needs: [sendMagicPacket, getCurrentTime]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: nashmaniac/create-issue-action@v1.1
-              with:
-                  title: ${{ needs.getCurrentTime.outputs.time }} 실행결과입니다.
-                  token: ${{secrets.GITHUB_TOKEN}}
-                  assignees: ${{github.actor}}
-                  labels: result
-                  body: ${{ needs.sendMagicPacket.outputs.result }}
+            - run : |
+                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
+                  echo $RES_CODE
