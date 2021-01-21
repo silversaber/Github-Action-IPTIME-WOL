@@ -14,8 +14,11 @@ jobs:
     getCurrentTime:
         name: "Get current time"
         runs-on: ubuntu-latest
+        outputs:
+          now : ${{steps.script.outputs.now}}
         steps:
-            - run : |
+            - id : script
+              run : |
                   sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
                   echo "set-output name=now::" + $time
@@ -24,14 +27,17 @@ jobs:
         name: "send curl"
         needs: getCurrentTime
         runs-on: ubuntu-latest
+        outputs:
+            script: ${{steps.script.outputs.status}}
         steps:
-            - run : |
+            - id : script
+              run : |
                   RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
-                  RES_CODE_STR = $(echo "실패")
                   if [ ${RES_CODE} == "200" ]; then
-                      RES_CODE_STR = $(echo "성공")
+                      echo "set-output name=status::성공"
+                  else
+                      echo "set-output name=status::실패"
                   fi
-                  echo $RES_CODE_STR
 
     createIssue:
       name: "Create Issue"
