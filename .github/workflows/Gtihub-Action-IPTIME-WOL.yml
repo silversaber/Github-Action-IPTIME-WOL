@@ -7,53 +7,37 @@ on:
     pull_request:
         branches: [master]
     schedule:
-        # 00*** 에 스케줄하였지만 실행은 30분 뒤에 되는 결과가 나와 30분 앞 당겼음
-        - cron: "30 23 * * *"
+        - cron: "0 0 * * *"
 
 jobs:
-    getCurrentTime:
-        name: "Get current time"
-        runs-on: ubuntu-latest
-        outputs:
-            time: ${{steps.current-time.outputs.formattedTime}}
-        steps:
-            - uses: 1466587594/get-current-time@v2
-              id: current-time
-              with:
-                  format: YYYY년 MM월 DD일 HH:mm:ss
-                  utcOffset: "+09:00"
-
-    sendMagicPacket:
-        name: "send curl"
-        needs: getCurrentTime
-        outputs:
-            result:  ${{steps.reporter.outputs.value}}
+    WOL:
+        name: "WOL"
         runs-on: ubuntu-latest
         steps:
-            - uses: indiesdev/curl@v1
-              id: api
-              with:
-                  url: ${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}
-                  method: "GET"
-                  headers: '{"Authorization" : "Basic ${{secrets.IPTIME_BASIC}}", "Referer" : "http://192.168.0.1:80"}'
+            - id : getCurrentTime
+              name : "get Current Time"
+              run : |1
+                  sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+                  time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
+                  echo "now=${time}" >> $GITHUB_ENV
+                  echo "title=${time} 실행결과입니다." >> $GITHUB_ENV
 
-            - uses: haya14busa/action-cond@v1
-              name: "create curl result"
-              id: reporter
-              with:
-                  cond: ${{ fromJson(steps.api.outputs.response).status_code == '200' }}
-                  if_true: "WOL 성공"
-                  if_false: "WOL 실패"
+            - id : sendMagicPacket
+              name : "send Magic Packet"
+              run : |
+                  RES_CODE=$(curl -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
+                  status="실패"
+                  if [ ${RES_CODE} == "200" ]; then
+                      status="실패"
+                  fi
+                  echo "status=${status}" >> $GITHUB_ENV
 
-    createIssue:
-        name: "Create Issue"
-        needs: [sendMagicPacket, getCurrentTime]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: nashmaniac/create-issue-action@v1.1
-              with:
-                  title: ${{ needs.getCurrentTime.outputs.time }} 실행결과입니다.
-                  token: ${{secrets.GITHUB_TOKEN}}
-                  assignees: ${{github.actor}}
-                  labels: result
-                  body: ${{ needs.sendMagicPacket.outputs.result }}
+            - id : createIssue
+              name : "Create Issue"
+              run : |
+                  labels=${{github.event_name}}
+                  api="https://api.github.com/repos/${{github.repository}}/issues"
+                  json="{\"title\": \"$title\", \"labels\" : [\"$labels\"], \"body\" : \"$status\"}"
+                  echo $json
+                  RES_CODE=$(curl -w "%{http_code}" -X POST -u ${{github.actor}}:${{secrets.GITHUB_TOKEN}} -H "Accept: application/vnd.github.v3+json" $api -d "$json")
+                  echo $RES_CODE
