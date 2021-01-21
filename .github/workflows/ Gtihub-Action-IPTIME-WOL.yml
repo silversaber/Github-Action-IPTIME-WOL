@@ -7,21 +7,25 @@ on:
   pull_request:
       branches: [ main ]
   schedule:
-    - cron: '0 0 * * *'
+  # 00*** 에 스케줄하였지만 실행은 30분 뒤에 되는 결과가 나와 30분 앞 당겼음
+    - cron: '30 11 * * *'
 
 jobs:
-  starts:
+  getCurrentTime:
     runs-on: ubuntu-latest
     steps:
       - name: Get current time
-        uses: 1466587594/get-current-time@v2
+      - uses: 1466587594/get-current-time@v2
         id: current-time
         with:
           format: YYYY년 MM월 DD일 HH:mm:ss
-          utcOffset: "+09:00"
-        
-      - name: curl
-        uses: indiesdev/curl@v1
+          utcOffset: "+08:30"
+
+  sendMagicPacket: 
+    runs-on: ubuntu-latest
+    steps:
+    - name: curl
+      - uses: indiesdev/curl@v1
         id: api
         with:
           url: ${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}
@@ -34,12 +38,16 @@ jobs:
           cond: ${{ fromJson(steps.api.outputs.response).status_code == '200' }}
           if_true: "WOL 성공"
           if_false: "WOL 실패"
-
-      - name: create issue
-        uses: nashmaniac/create-issue-action@v1.1
+        
+  createIssue: 
+    runs-on: ubuntu-latest
+    - name: create issue
+    steps:
+      - uses: nashmaniac/create-issue-action@v1.1
         with:
-          title: ${{ steps.current-time.outputs.formattedTime }} 실행결과입니다.
+          title: ${{ getCurrentTime.steps.current-time.outputs.formattedTime }} 실행결과입니다.
           token: ${{secrets.GITHUB_TOKEN}}
           assignees: ${{github.actor}}
           labels: result
-          body: ${{ steps.reporter.outputs.value }}
+          body: ${{ sendMagicPacket.steps.reporter.outputs.value }}
+      
