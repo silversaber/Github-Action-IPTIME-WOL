@@ -19,7 +19,7 @@ jobs:
               id: current-time
               with:
                   format: YYYY년 MM월 DD일 HH:mm:ss
-                  utcOffset: "+08:30"
+                  utcOffset: "+09:00"
 
     sendMagicPacket:
         name: "send curl"
