@@ -27,7 +27,11 @@ jobs:
         steps:
             - run : |
                   RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
-                  echo $RES_CODE
+                  RES_CODE_STR = "실패"
+                  if [ ${RES_CODE} == "200" ]; then
+                      RES_CODE_STR = "성공"
+                  fi
+                  echo $RES_CODE_STR
 
     createIssue:
       name: "Create Issue"
