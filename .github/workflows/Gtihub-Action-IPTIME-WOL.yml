@@ -3,9 +3,9 @@ name: Gtihub-Action-IPTIME-WOL
 #on : [push]
 on:
     push:
-        branches: [master]
+        branches: [test]
     pull_request:
-        branches: [master]
+        branches: [test]
     schedule:
         # 00*** 에 스케줄하였지만 실행은 30분 뒤에 되는 결과가 나와 30분 앞 당겼음
         - cron: "30 23 * * *"
@@ -14,14 +14,10 @@ jobs:
     getCurrentTime:
         name: "Get current time"
         runs-on: ubuntu-latest
-        outputs:
-            time: ${{steps.current-time.outputs.formattedTime}}
         steps:
-            - uses: 1466587594/get-current-time@v2
-              id: current-time
-              with:
-                  format: YYYY년 MM월 DD일 HH:mm:ss
-                  utcOffset: "+09:00"
+            - runs : |
+                  time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
+                  echo $time
 
     sendMagicPacket:
         name: "send curl"
