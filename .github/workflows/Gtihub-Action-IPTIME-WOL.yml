@@ -14,14 +14,8 @@ jobs:
     getCurrentTime:
         name: "Get current time"
         runs-on: ubuntu-latest
-        outputs:
-            time: ${{steps.current-time.outputs.formattedTime}}
         steps:
-            - uses: 1466587594/get-current-time@v2
-              id: current-time
-              with:
-                  format: YYYY년 MM월 DD일 HH:mm:ss
-                  utcOffset: "+09:00"
+            - run : echo "test"
 
     sendMagicPacket:
         name: "send curl"
