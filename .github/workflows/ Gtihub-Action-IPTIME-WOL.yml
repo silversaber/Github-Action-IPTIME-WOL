@@ -3,9 +3,9 @@ name: Gtihub-Action-IPTIME-WOL
 #on : [push]
 on:
   push:
-      branches: [ main ]
+      branches: [ master ]
   pull_request:
-      branches: [ main ]
+      branches: [ master ]
   schedule:
   # 00*** 에 스케줄하였지만 실행은 30분 뒤에 되는 결과가 나와 30분 앞 당겼음
     - cron: '30 11 * * *'
