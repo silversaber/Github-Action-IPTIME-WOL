@@ -48,8 +48,8 @@ jobs:
         steps:
             - uses: nashmaniac/create-issue-action@v1.1
               with:
-                  title: ${{ getCurrentTime.current-time.outputs.formattedTime }} 실행결과입니다.
+                  title: ${{ github.getCurrentTime.current-time.outputs.formattedTime }} 실행결과입니다.
                   token: ${{secrets.GITHUB_TOKEN}}
                   assignees: ${{github.actor}}
                   labels: result
-                  body: ${{ sendMagicPacket.reporter.outputs.value }}
+                  body: ${{ github.sendMagicPacket.reporter.outputs.value }}
