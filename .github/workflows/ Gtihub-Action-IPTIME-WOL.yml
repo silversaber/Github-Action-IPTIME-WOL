@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get current time
-      - uses: 1466587594/get-current-time@v2
+        uses: 1466587594/get-current-time@v2
         id: current-time
         with:
           format: YYYY년 MM월 DD일 HH:mm:ss
@@ -24,13 +24,13 @@ jobs:
   sendMagicPacket: 
     runs-on: ubuntu-latest
     steps:
-    - name: curl
-      - uses: indiesdev/curl@v1
-        id: api
-        with:
-          url: ${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}
-          method: 'GET'
-          headers: '{"Authorization" : "Basic ${{secrets.IPTIME_BASIC}}", "Referer" : "http://192.168.0.1:80"}'
+      - name: curl
+          uses: indiesdev/curl@v1
+          id: api
+          with:
+            url: ${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}
+            method: 'GET'
+            headers: '{"Authorization" : "Basic ${{secrets.IPTIME_BASIC}}", "Referer" : "http://192.168.0.1:80"}'
           
       - uses: haya14busa/action-cond@v1
         id: reporter
@@ -41,7 +41,6 @@ jobs:
         
   createIssue: 
     runs-on: ubuntu-latest
-    - name: create issue
     steps:
       - uses: nashmaniac/create-issue-action@v1.1
         with:
