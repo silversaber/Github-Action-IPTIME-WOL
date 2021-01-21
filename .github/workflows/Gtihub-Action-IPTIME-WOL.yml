@@ -37,6 +37,5 @@ jobs:
               run : |
                   labels=${{github.event_name}}
                   api="https://api.github.com/repos/${{github.repository}}/issues"
-                  contents='{"title": $title, "labels" : $labels, "body" : $body}'
-                  RES_CODE=$(curl -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" $api -d $contents)
+                  RES_CODE=$(curl -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" $api -d "{\"title\": $title, \"labels\" : $labels, \"body\" : $body}")
                   echo $RES_CODE
