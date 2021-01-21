@@ -26,7 +26,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - run : |
-                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}1/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
+                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin1/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
                   RES_CODE_STR = "성공"
                   if [ ${RES_CODE} -ne 200 ] ; then
                       RES_CODE_STR = "실패"
@@ -44,4 +44,4 @@ jobs:
             token: ${{secrets.GITHUB_TOKEN}}
             assignees: ${{github.actor}}
             labels: result
-            body: ${{ needs.sendMagicPacket.outputs.result }}
+            body: ${{ needs.sendMagicPacket.outputs.status }}
