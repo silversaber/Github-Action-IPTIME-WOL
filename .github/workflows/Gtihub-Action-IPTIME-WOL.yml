@@ -16,6 +16,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - run : |
+                  sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
                   echo $time
 
