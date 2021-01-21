@@ -14,6 +14,8 @@ jobs:
     getCurrentTime:
         name: "Get current time"
         runs-on: ubuntu-latest
+        outputs:
+            time: ${{steps.current-time.outputs.formattedTime}}
         steps:
             - uses: 1466587594/get-current-time@v2
               id: current-time
@@ -24,6 +26,8 @@ jobs:
     sendMagicPacket:
         name: "send curl"
         needs: getCurrentTime
+        outputs:
+            result:  ${{steps.reporter.outputs.value}}
         runs-on: ubuntu-latest
         steps:
             - uses: indiesdev/curl@v1
@@ -48,8 +52,8 @@ jobs:
         steps:
             - uses: nashmaniac/create-issue-action@v1.1
               with:
-                  title: ${{ needs.getCurrentTime.steps.current-time.outputs.formattedTime }} 실행결과입니다.
+                  title: ${{ needs.getCurrentTime.outputs.time }} 실행결과입니다.
                   token: ${{secrets.GITHUB_TOKEN}}
                   assignees: ${{github.actor}}
                   labels: result
-                  body: ${{ needs.sendMagicPacket.steps.reporter.outputs.value }}
+                  body: ${{ needs.sendMagicPacket.outputs.result }}
