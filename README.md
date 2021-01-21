@@ -8,3 +8,6 @@
     IPTIME_BASIC  : IPTIME 공유기의 '관리자 계정:계정 비밀번호'의 값을 Base64로 인코딩한값입니다.
     IPTIME_DOMAIN : IPTIME 공유기의 외부 도메인입니다.
     IPTIME_MAC    : IPTIME 공유기를 통하여 WOL을 실행할 컴퓨터의 MAC 주소입니다.
+
+[iptimelink]: https://iptime.com/iptime/
+[githubactionlink]: https://github.com/features/actions
