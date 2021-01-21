@@ -23,6 +23,7 @@ jobs:
 
     sendMagicPacket:
         name: "send curl"
+        needs: getCurrentTime
         runs-on: ubuntu-latest
         steps:
             - uses: indiesdev/curl@v1
@@ -42,12 +43,13 @@ jobs:
 
     createIssue:
         name: "Create Issue"
+        needs: [sendMagicPacket, getCurrentTime]
         runs-on: ubuntu-latest
         steps:
             - uses: nashmaniac/create-issue-action@v1.1
               with:
-                  title: ${{ getCurrentTime.steps.current-time.outputs.formattedTime }} 실행결과입니다.
+                  title: ${{ getCurrentTime.current-time.outputs.formattedTime }} 실행결과입니다.
                   token: ${{secrets.GITHUB_TOKEN}}
                   assignees: ${{github.actor}}
                   labels: result
-                  body: ${{ sendMagicPacket.steps.reporter.outputs.value }}
+                  body: ${{ sendMagicPacket.reporter.outputs.value }}
