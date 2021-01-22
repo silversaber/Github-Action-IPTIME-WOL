@@ -16,7 +16,7 @@ jobs:
         steps:
             - id : getCurrentTime
               name : "get Current Time"
-              run : |1
+              run : |
                   sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
                   time=$(date '+%Y년 %m월 %d일 %H:%M:%S')
                   echo "now=${time}" >> $GITHUB_ENV
