@@ -27,7 +27,7 @@ jobs:
               run : |
                   RES_CODE=$(curl -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
                   status="실패"
-                  if [ ${RES_CODE} == "ok200" ]; then
+                  if [ ${RES_CODE} eq 200 ]; then
                       status="실패"
                   fi
                   echo $RES_CODE
