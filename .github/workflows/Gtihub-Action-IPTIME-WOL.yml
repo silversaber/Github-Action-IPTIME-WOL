@@ -30,6 +30,8 @@ jobs:
                   if [ ${RES_CODE} == "200" ]; then
                       status="실패"
                   fi
+                  echo $RES_CODE
+                  echo $status
                   echo "status=${status}" >> $GITHUB_ENV
 
             - id : createIssue
