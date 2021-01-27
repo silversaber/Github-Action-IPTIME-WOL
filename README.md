@@ -12,8 +12,7 @@
     
 
 ## 3. 이슈
-[Github-Action][githubactionlink]이 가동하는데 50분 이상이 걸려 1시간을 땡겨
-UTC 23:00(KTC 08:00)시에 실행하도록 코드 
+[Github-Action][githubactionlink]이 가동하는데 오래 걸려 시간을 앞당겨 실행
 
 [iptimelink]: https://iptime.com/iptime/
 [githubactionlink]: https://github.com/features/actions
