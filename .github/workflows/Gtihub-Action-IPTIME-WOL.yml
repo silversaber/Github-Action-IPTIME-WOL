@@ -25,7 +25,7 @@ jobs:
             - id : sendMagicPacket
               name : "send Magic Packet"
               run : |
-                  RES_CODE=$(curl -o /dev/null -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
+                  RES_CODE=$(curl -o /dev/null --connect-timeout 10 -H "Authorization: Basic ${{secrets.IPTIME_BASIC}}" -H "Referer: http://192.168.0.1:80" -w "%{http_code}" "${{secrets.IPTIME_DOMAIN}}/cgi-bin/wol_apply.cgi?act=wakeup&mac=${{secrets.IPTIME_MAC}}")
                   status="실패"
                   if [ $RES_CODE -eq 200 ]; then
                       status="성공"
